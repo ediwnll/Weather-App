@@ -1,0 +1,35 @@
+
+body{
+    margin: 0;
+    padding: 0;
+    background: hsla(216, 30%, 37%, 1);
+}
+
+.navi{
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+.search{
+    justify-self: center;
+}
+
+.search > * {
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    font-size: 18px;
+    color: aliceblue;
+}
+
+.location-input{
+    background-color: #152c39;
+    padding: 4px 14px;
+}
+
+.location-submit{
+    width: 40px;
+    margin-left: 6px;
+    background-color: #2c4e66;
+}
