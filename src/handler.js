@@ -1,4 +1,4 @@
-import api from "./api";
+import dom from "./dom"
 
 const handler =(()=>{
     const locationSubmit = document.querySelector('.location-submit')
@@ -7,7 +7,7 @@ const handler =(()=>{
     function clickHandler(){
         locationSubmit.addEventListener('click',()=>{
             console.log(locationInput.value)
-            api.getData(locationInput.value)
+            dom.showForecast(locationInput.value)
         })
     }
 
