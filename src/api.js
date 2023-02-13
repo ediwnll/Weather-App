@@ -21,56 +21,37 @@
 //38982387bce58058b2661be97bbebcb5
 
 const api =(()=>{
-    async function getCityData(query){
-        try{
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=38982387bce58058b2661be97bbebcb5`, {mode: 'cors'},)
-            const data = await response.json()
-            const {coord} = data
-            const city = data.name
-            const {country} = data.sys
-            return {coord, city, country}
-        }catch(error){
-            return console.error(error)
-        }
-        
-    }
-    async function getForecastData(coord, units ='metric'){
-        try{
-            const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${coord.lat}&lon=${coord.lon}&exclude=alerts,minutely&units=${units}&appid=38982387bce58058b2661be97bbebcb5`, {mode: 'cors'},)
-            const data = await response.json()
-            return data
-        }catch(error){
-            return console.error(error)
-        }
-        
-    }
-    
     async function getData(query){
-        const cityData = await getCityData(query)
-        const forecastData = await getForecastData(cityData.coord)
+        const {locationData, forecastData} = query
+
         
-        const data = {
-            city: cityData.city,
-            country: cityData.country,
-            coord: cityData.coord,
+        const processedData = {
+            city: locationData.name,
+            country: locationData.sys.country,
+            coord: locationData.coord,
             current: {
-              temperature: forecastData.current.temp,
-              feelsLike: forecastData.current.feels_like,
-              weatherId: forecastData.current.weather[0].id,
+              temperature: Math.round(forecastData.current.temp),
+              feelsLike: Math.round(forecastData.current.feels_like),
+              icon: forecastData.current.weather[0].icon,
               tempDescription: forecastData.current.weather[0].description,
-              windSpeed: forecastData.current.wind_speed,
+              windSpeed: Math.round(forecastData.current.wind_speed),
               windDegree: forecastData.current.wind_deg,
-              chanceOfRain: forecastData.daily[0].pop,
+              chanceOfRain: forecastData.daily[0].pop * 100,
               humidity: forecastData.current.humidity,
               dateAndTime: new Date(),
               sunriseTime: forecastData.current.sunrise,
               sunsetTime: forecastData.current.sunset,
+              clouds: forecastData.current.clouds,
+              uvi: Math.round(forecastData.current.uvi),
+              visibility: forecastData.current.visibility/1000,
+              moonPhase: forecastData.daily[0].moon_phase,
+
             },
             daily: [],
             hourly: [],
         }
         for(let i =0; i<7; i += 1){
-            data.daily[i] = {
+            processedData.daily[i] = {
                 dayTemperature: forecastData.daily[i].temp.day,
                 nightTemperature: forecastData.daily[i].temp.night,
                 weatherId: forecastData.daily[i].weather[0].id,
@@ -82,7 +63,7 @@ const api =(()=>{
         }
 
         for(let j =0; j< 24; j+=1){
-            data.hourly[j] ={
+            processedData.hourly[j] ={
                 temperature: forecastData.hourly[j].temp,
                 weatherId: forecastData.hourly[j].weather[0].id,
                 tempDescription: forecastData.hourly[j].weather[0].description,
@@ -91,12 +72,39 @@ const api =(()=>{
                 windDegree: forecastData.hourly[j].wind_deg,
             }
         }
-        console.log(data)
-        return data
+        console.log(processedData)
+        return processedData
+    }
+
+    async function getForecastData(locationData, units ='metric'){
+        try{
+            const response = await fetch(`https://api.openweathermap.org/data/3.0/onecall?lat=${coord.lat}&lon=${coord.lon}&exclude=alerts,minutely&units=${units}&appid=38982387bce58058b2661be97bbebcb5`, {mode: 'cors'},)
+            const forecastData = await response.json()
+            return getData({locationData,forecastData})
+        }catch(error){
+            return console.error(error)
+        }
+        
+    }
+
+    async function getLocData(query){
+        try{
+            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${query}&appid=38982387bce58058b2661be97bbebcb5`, {mode: 'cors'},)
+            const locData = await response.json()
+            
+            if(response.status>400){
+                console.log('Error', locData)
+                return locData
+            }
+            return getForecastData(locData)
+        }catch(error){
+            return console.error(error)
+        }
+        
     }
 
     return {
-        getData,
+        getLocData,
     }
 })()
 

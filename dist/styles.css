@@ -8,7 +8,7 @@ body{
     padding: 0;
     background: hsla(216, 30%, 37%, 1);
     font-family: var(--sniglet);
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 p{
@@ -48,6 +48,7 @@ p{
 main{
     display: flex;
     justify-content: space-evenly;
+    height: 90%;
 }
 
 /*Left Side*/
@@ -104,4 +105,26 @@ main{
 .daily-item:not(:last-child){
     margin-bottom: 16px;
     padding-bottom: 16px;
+}
+
+@media only screen and (max-width:1200px) {
+    
+}
+
+@media only screen and (max-width:768px){
+    main{
+        display: block;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+    }
+    .section-weather{
+        justify-content: center;
+    }
+    .daily-list{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        
+    }
 }
