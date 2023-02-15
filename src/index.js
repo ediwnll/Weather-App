@@ -1,5 +1,7 @@
 import api from "./api"
 import handler from "./handler"
+import dom from "./dom"
 
-console.log('Weather')
+
+handler.load()
 handler.clickHandler()

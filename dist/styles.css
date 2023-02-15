@@ -3,6 +3,14 @@
     --sniglet: 'Sniglet', cursive;
 }
 
+.hide{
+    display:none
+}
+
+.show{
+    display: block;
+}
+
 body{
     margin: 0;
     padding: 0;

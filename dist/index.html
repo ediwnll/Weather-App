@@ -20,9 +20,16 @@
         <input type="search" class="location-input" name="" id="" placeholder="Location">
         <button class="location-submit" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
       </form>
-      <div></div>
+      <div class="settings">
+        <button class="units-metric">°C, m/s</button>
+        <button class="units-imperial">°F, mph</button>
+      </div>
     </nav>
-    <main>
+    <div class="info">
+      <div class="loading hide"><i class="far fa-spinner fa-pulse"></i></div>
+      <p class="error hide"></p>
+    </div>
+    <main class="main-container">
       <div class="left-side">
       <section class="section-head">
         <h2 class="location-title">
