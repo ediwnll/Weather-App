@@ -78,18 +78,17 @@ const dom = (()=>{
       const error = document.querySelector('.error')
       const dailyList = document.querySelector('.daily-list')
 
-      if(data.cod){
-        console.log(data.message)
+      if(query.cod){
+        console.log(query.message)
         error.className = 'error show'
         mainContainer.className = 'main-container hide'
-        error.textContent = data.message.charAt(0).toUpperCase() + data.message.slice(1)
+        error.textContent = query.message.charAt(0).toUpperCase() + query.message.slice(1)
       } 
       else{
 
         error.className = 'error hide'
         mainContainer.className = 'main-container'
-        const {city,country, units,current, daily} = data
-        changeUnit(units)
+        const {city,country, units,current, daily} = query
 
         headingCity.textContent = city
         headingCountry.textContent = country
@@ -131,13 +130,48 @@ const dom = (()=>{
           dailyDay.appendChild(dailyDaySpan)
 
           const dailyWeatherDay = document.createElement('span')
-          dailyWeatherDay.classList.add('daily-item-day-temp')
+          dailyWeatherDay.className = 'daily-item-day-temp'
           dailyWeatherDay.setAttribute('title', daily[i].tempDescription.charAt(0).toUpperCase()+daily[i].tempDescription.slice(1),)
           dailyDay.appendChild(dailyWeatherDay)
-        }
 
-        
-        console.log(data)
+          const dailyWeatherDayTemp = document.createElement('span')
+          dailyWeatherDayTemp.className = 'data-daily-temp'
+          dailyWeatherDayTemp.textContent = daily[i].dayTemperature
+          dailyWeatherDay.appendChild(dailyWeatherDayTemp)
+
+          const dailyWeatherDayTempUnit = document.createElement('span')
+          dailyWeatherDayTempUnit.className='unit-temp'
+          dailyWeatherDay.appendChild(dailyWeatherDayTempUnit)
+
+          const dailyWeatherNight = document.createElement('span')
+          dailyWeatherNight.className = 'daily-item-night-temp' 
+          dailyDay.appendChild(dailyWeatherNight)
+
+          const dailyWeatherNightTemp = document.createElement('span')
+          dailyWeatherNightTemp.className = 'data-night-temp'
+          dailyWeatherNightTemp.textContent = daily[i].nightTemperature
+          dailyWeatherNight.appendChild(dailyWeatherNightTemp)
+
+          const dailyWeatherNightTempUnit = document.createElement('span')
+          dailyWeatherNightTempUnit.className = 'unit-temp'
+          dailyWeatherNight.appendChild(dailyWeatherNightTempUnit)
+
+          const dailyWindSpan = document.createElement('span')
+          dailyWindSpan.classList.add('daily-item-wind')
+          dailyWindSpan.setAttribute('title', getWindDescription(daily[i].windSpeed, units).windDesc,)
+          dailyDay.appendChild(dailyWindSpan)
+
+          const dailyWindSpeed = document.createElement('span')
+          dailyWindSpeed.className = 'data-daily-wind-speed'
+          dailyWindSpeed.textContent = getWindDescription(daily[i].windSpeed, units).roundedSpeed
+          dailyWindSpan.appendChild(dailyWindSpeed)
+
+          const dailyWindSpeedUnit = document.createElement('span')
+          dailyWindSpeedUnit.className = 'unit-speed'
+          dailyWindSpan.appendChild(dailyWindSpeedUnit)
+        }
+        changeUnit(units)      
+        console.log(query)
       }
     }
 
