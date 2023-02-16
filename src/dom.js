@@ -78,21 +78,17 @@ const dom = (()=>{
       const error = document.querySelector('.error')
       const dailyList = document.querySelector('.daily-list')
 
-      if(query.cod){
-        console.log(query.message)
-        error.className = 'error show'
-        mainContainer.className = 'main-container hide'
-        error.textContent = query.message.charAt(0).toUpperCase() + query.message.slice(1)
-      } 
-      else{
+       
+      
 
         error.className = 'error hide'
         mainContainer.className = 'main-container'
         const {city,country, units,current, daily} = query
-
+        console.log(query + "testing")
         headingCity.textContent = city
         headingCountry.textContent = country
-        headingCurrentTemp.textContent = current.temp
+        console.log(headingCountry+"testing")
+        headingCurrentTemp.textContent = current.temperature
         headingWindSpeed.textContent = getWindDescription(current.windSpeed, units).roundedSpeed
 
         iconWeather.className.baseVal = ''
@@ -172,7 +168,7 @@ const dom = (()=>{
         }
         changeUnit(units)      
         console.log(query)
-      }
+      
     }
 
     function getUviColor(uvi){
