@@ -17,69 +17,63 @@ const dom = (()=>{
     }
 
     function convertIcon(iconId){
-        switch(iconId){
-            case '01d':
-        return 'fa-sun'
-      case '01n':
-        return 'fa-moon-stars'
-      case '02d':
-        return 'fa-cloud-sun'
-      case '02n':
-        return 'fa-cloud-moon'
-      case '03d':
-        return 'fa-clouds-sun'
-      case '03n':
-        return 'fa-clouds-moon'
-      case '04d':
-      case '04n':
-        return 'fa-clouds'
-      case '09d':
-      case '09n':
-        return 'fa-cloud-showers-heavy'
-      case '10d':
-        return 'fa-cloud-sun-rain'
-      case '10n':
-        return 'fa-cloud-moon-rain'
-      case '11d':
-      case '11n':
-        return 'fa-thunderstorm'
-      case '13d':
-      case '13n':
-        return 'fa-cloud-snow'
-      case '50d':
-      case '50n':
-        return 'fa-fog'
-    default:
-        }
-        return false
+      switch(iconId){
+        case '01d':
+          return 'fa-sun'
+        case '01n':
+          return 'fa-moon-stars'
+        case '02d':
+          return 'fa-cloud-sun'
+        case '02n':
+          return 'fa-cloud-moon'
+        case '03d':
+          return 'fa-clouds-sun'
+        case '03n':
+          return 'fa-clouds-moon'
+        case '04d':
+        case '04n':
+          return 'fa-clouds'
+        case '09d':
+        case '09n':
+          return 'fa-cloud-showers-heavy'
+        case '10d':
+          return 'fa-cloud-sun-rain'
+        case '10n':
+          return 'fa-cloud-moon-rain'
+        case '11d':
+        case '11n':
+          return 'fa-thunderstorm'
+        case '13d':
+        case '13n':
+          return 'fa-cloud-snow'
+        case '50d':
+        case '50n':
+          return 'fa-fog'
+        default:
+      }
+      return false
     }
 
-    function showForecast(query){
+    function showForecast(daily,units){
 
-      const mainContainer = document.querySelector('.main-container')
-      const headingCity = document.querySelector('.data-city');
-      const headingCountry = document.querySelector('.data-country');
-      const headingCurrentTemp = document.querySelector('.data-temp');
-      const headingWindSpeed = document.querySelector('.data-wind-speed');
+      const iconWeather = document.querySelector('.icon-weather')
+      const dataCity = document.querySelector('.data-city');
+      const dataCountry = document.querySelector('.data-country');
+      const dataCurrentTemp = document.querySelector('.data-temp');
+      const infoTime = document.querySelector('.data-time')
       const infoFeelsLike = document.querySelector('.data-feels-like');
       const infoTempDesc = document.querySelector('.data-temp-desc');
-      const infoTime = document.querySelector('.data-time')
-      const iconWeather = document.querySelector('.icon-weather')
+      const headingWindSpeed = document.querySelector('.data-wind-speed');
       const infoWindDescription = document.querySelector('.data-wind-desc')
       const addHumidity = document.querySelector('.data-humidity')
       const addVisibility = document.querySelector('.data-visibility')
       const addCloud = document.querySelector('.data-clouds')
-      const addPressure = document.querySelector('.data-pressure')
       const addRainChance = document.querySelector('.data-rain-chance')
       const addUvi = document.querySelector('.data-uvi')
       const addSunrise = document.querySelector('.data-sunrise')
       const addSunset = document.querySelector('.data-sunset')
       const addMoonPhase = document.querySelector('.data-moon')
       const error = document.querySelector('.error')
-      const dailyList = document.querySelector('.daily-list')
-
-       
-      
 
         error.className = 'error hide'
         mainContainer.className = 'main-container'
@@ -189,7 +183,7 @@ const dom = (()=>{
     }
 
     function getWindDescription(windSpeed, units){
-        let windDesc = '';
+        let windDesc
         const roundedSpeed= Math.round(windSpeed)
         let speed = windSpeed
         if(units === 'imperial'){
@@ -293,8 +287,7 @@ const dom = (()=>{
       })
     }
 
-    function formatTime( data,units){
-      const{time, sunriseTime, sunSetTime} = data
+    function formatTime(data,units){
       let formattedTime
       let formattedSunrise
       let formattedSunset
