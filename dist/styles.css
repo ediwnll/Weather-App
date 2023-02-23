@@ -28,6 +28,7 @@ p{
     justify-content: center;
     margin-top: 50px;
     margin-bottom: 50px;
+    gap:650px;
 }
 
 .search{
@@ -51,6 +52,11 @@ p{
     width: 40px;
     margin-left: 6px;
     background-color: #2c4e66;
+}
+
+.settings{
+    align-self: center;
+    
 }
 
 main{
@@ -113,6 +119,10 @@ main{
 .daily-item:not(:last-child){
     margin-bottom: 16px;
     padding-bottom: 16px;
+}
+
+.big-data{
+    font-size: 52px;
 }
 
 @media only screen and (max-width:1200px) {

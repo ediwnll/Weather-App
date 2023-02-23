@@ -1,4 +1,5 @@
 import api from "./api"
+import { format } from "date-fns"
 
 const dom = (()=>{
     //start
@@ -16,54 +17,67 @@ const dom = (()=>{
       }
     }
 
-    function convertIcon(iconId){
-      switch(iconId){
-        case '01d':
-          return 'fa-sun'
-        case '01n':
-          return 'fa-moon-stars'
-        case '02d':
-          return 'fa-cloud-sun'
-        case '02n':
-          return 'fa-cloud-moon'
-        case '03d':
-          return 'fa-clouds-sun'
-        case '03n':
-          return 'fa-clouds-moon'
-        case '04d':
-        case '04n':
-          return 'fa-clouds'
-        case '09d':
-        case '09n':
-          return 'fa-cloud-showers-heavy'
-        case '10d':
-          return 'fa-cloud-sun-rain'
-        case '10n':
-          return 'fa-cloud-moon-rain'
-        case '11d':
-        case '11n':
-          return 'fa-thunderstorm'
-        case '13d':
-        case '13n':
-          return 'fa-cloud-snow'
-        case '50d':
-        case '50n':
-          return 'fa-fog'
-        default:
+    function showDailyForecast(daily,units){
+      const dailyList = document.querySelector('.daily-list');
+      dailyList.textContent = ''
+
+      for (let i = 0; i < daily.length; i += 1) {
+        const dailyItem = document.createElement('div')
+        dailyItem.className = 'daily-item'
+        const dailyDate = document.createElement('span')
+        dailyDate.className = 'data-daily-date daily-item-date'
+        dailyDate.textContent = formatTime(daily[i].date,units,).formattedWeekDay
+        const dailyWeatherDay = document.createElement('span')
+        dailyWeatherDay.className = 'daily-item-day-temp'
+        dailyWeatherDay.setAttribute('title',daily[i].tempDescription.charAt(0).toUpperCase()+ daily[i].tempDescription.slice(1),)
+      
+        const dailyWeatherDayTemp = document.createElement('span')
+        dailyWeatherDayTemp.className = 'data-daily-temp'
+        dailyWeatherDayTemp.textContent = daily[i].dayTemperature
+        const dailyWeatherDayTempUnit = document.createElement('span')
+        dailyWeatherDayTempUnit.className = 'unit-temp'
+        const dailyWeatherNight = document.createElement('span')
+        dailyWeatherNight.className = 'daily-item-night-temp'
+        const dailyWeatherNightTemp = document.createElement('span')
+        dailyWeatherNightTemp.className = 'data-daily-night-temp'
+        dailyWeatherNightTemp.textContent = daily[i].nightTemperature
+        const dailyWeatherNightTempUnit = document.createElement('span')
+        dailyWeatherNightTempUnit.className = 'unit-temp'
+        const dailyWind = document.createElement('span')
+        dailyWind.className = 'daily-item-wind'
+        dailyWind.setAttribute('title',getWindDescription(daily[i].windSpeed, units).windDesc,);
+        const dailyWindSpeed = document.createElement('span')
+        dailyWindSpeed.className = 'data-daily-wind-speed'
+        dailyWindSpeed.textContent = getWindDescription(daily[i].windSpeed,units,).roundedSpeed;
+        const dailyWindSpeedUnit = document.createElement('span')
+        dailyWindSpeedUnit.className = 'unit-speed'
+
+        dailyList.appendChild(dailyItem)
+        dailyItem.appendChild(dailyDate)
+        dailyItem.appendChild(dailyWeatherDay)
+        dailyWeatherDay.appendChild(dailyWeatherDayTemp)
+        dailyWeatherDay.appendChild(dailyWeatherDayTempUnit)
+        dailyItem.appendChild(dailyWeatherNight)
+        dailyWeatherNight.appendChild(dailyWeatherNightTemp)
+        dailyWeatherNight.appendChild(dailyWeatherNightTempUnit)
+        dailyItem.appendChild(dailyWind)
+        dailyWind.appendChild(dailyWindSpeed)
+        dailyWind.appendChild(dailyWindSpeedUnit)
+        
       }
-      return false
+      changeUnit(units)      
+      
     }
 
-    function showForecast(daily,units){
-
+    function showForecast(city,country,current,units){
       const iconWeather = document.querySelector('.icon-weather')
-      const dataCity = document.querySelector('.data-city');
-      const dataCountry = document.querySelector('.data-country');
-      const dataCurrentTemp = document.querySelector('.data-temp');
+      const dataCity = document.querySelector('.data-city')
+      const dataCountry = document.querySelector('.data-country')
+      const dataCurrentTemp = document.querySelector('.data-temp')
       const infoTime = document.querySelector('.data-time')
-      const infoFeelsLike = document.querySelector('.data-feels-like');
-      const infoTempDesc = document.querySelector('.data-temp-desc');
-      const headingWindSpeed = document.querySelector('.data-wind-speed');
+      const infoFeelsLike = document.querySelector('.data-feels-like')
+      const infoTempDesc = document.querySelector('.data-temp-desc')
+      const infoWindSpeed = document.querySelector('.data-wind-speed')
       const infoWindDescription = document.querySelector('.data-wind-desc')
       const addHumidity = document.querySelector('.data-humidity')
       const addVisibility = document.querySelector('.data-visibility')
@@ -73,96 +87,51 @@ const dom = (()=>{
       const addSunrise = document.querySelector('.data-sunrise')
       const addSunset = document.querySelector('.data-sunset')
       const addMoonPhase = document.querySelector('.data-moon')
+      const dataMoonIcon = document.querySelector('.data-moon-icon')
+
+      const currentIcon = document.createElement('i')
+      //currentIcon.className = `big-icon far ${convertIcon(current.icon,)}`
+      iconWeather.textContent = ''
+      iconWeather.appendChild(currentIcon)
+
+      dataCity.textContent = city
+      dataCountry.textContent = country
+      dataCurrentTemp.textContent = current.temperature
+      infoTime.textContent = formatTime(current.time, units).formattedTime
+      infoFeelsLike.textContent = current.feelsLike
+      infoTempDesc.textContent = current.tempDescription.charAt(0).toUpperCase()+ current.tempDescription.slice(1)
+      infoWindSpeed.textContent = getWindDescription(current.windSpeed, units,).roundedSpeed
+      infoWindDescription.textContent = getWindDescription(current.windSpeed,units,).windDesc
+      addHumidity.textContent = current.humidity
+      addVisibility.textContent = current.visibility
+      addCloud.textContent = current.clouds
+      addRainChance.textContent = current.chanceOfRain
+      addUvi.textContent = current.uvi
+      addUvi.className = getUviColor(current.uvi)
+      addSunrise.textContent = formatTime(current.sunriseTime, units,).formattedSunriseTime
+      addSunset.textContent = formatTime(current.sunsetTime, units,).formattedSunsetTime
+      addMoonPhase.textContent = getMoon(current.moonPhase).moonName;
+      dataMoonIcon.setAttribute('src', getMoon(current.moonPhase).moonIcon)
+      dataMoonIcon.setAttribute('title', getMoon(current.moonPhase).moonName)
+    }
+
+    function renderApp(data){
       const error = document.querySelector('.error')
 
+      if(data.cod){
+        error.className = 'error show'
+        mainContainer.className = 'main-container hide'
+        error.textContent = data.message.charAt(0).toUpperCase()+data.message.slice(1)
+      }
+      else{
         error.className = 'error hide'
         mainContainer.className = 'main-container'
-        const {city,country, units,current, daily} = query
-        console.log(query + "testing")
-        headingCity.textContent = city
-        headingCountry.textContent = country
-        console.log(headingCountry+"testing")
-        headingCurrentTemp.textContent = current.temperature
-        headingWindSpeed.textContent = getWindDescription(current.windSpeed, units).roundedSpeed
 
-        iconWeather.className.baseVal = ''
-        iconWeather.className.baseVal = `big-icon icon-weather far ${convertIcon(current.iconWeatherDegree)}`
-        
-        infoTime.textContent = formatTime(current.time, units).formattedTime
-        infoFeelsLike.textContent = current.feelsLike
-        infoTempDesc.textContent = current.tempDescription.charAt(0).toUpperCase() + current.tempDescription.slice(1)
-        infoWindDescription.textContent = getWindDescription(current.windSpeed, units).windDesc
-
-        addHumidity.textContent = current.humidity        
-        addVisibility.textContent = current.visibility        
-        addCloud.textContent = current.clouds        
-        addPressure.textContent = current.pressure        
-        addRainChance.textContent = current.chanceOfRain        
-        addUvi.textContent = current.uvi      
-        
-        addUvi.className = ''
-        addUvi.className = getUviColor(current.uvi)
-
-        addSunrise.textContent = formatTime(current.sunriseTime, units).formattedSunriseTime
-        addSunset.textContent = formatTime(current.sunSetTime, units).formattedSunsetTime
-        addMoonPhase.setAttribute('src', getMoon(current.moonPhase).moonIcon)
-        addMoonPhase.setAttribute('title', getMoon(current.moonPhase).moonName)
-
-        dailyList.textContent = ''
-        for(let i =0; i<daily.length; i+=1){
-          const dailyDay = document.createElement('div')
-          dailyDay.classList.add('daily-item')
-          dailyList.append(dailyDay)
-
-          const dailyDaySpan = document.createElement('span')
-          dailyDaySpan.classList.add('data-daily-date', 'daily-item-date')
-          dailyDaySpan.textContent = formatTime(daily[i].date, units).formattedWeekDay
-          dailyDay.appendChild(dailyDaySpan)
-
-          const dailyWeatherDay = document.createElement('span')
-          dailyWeatherDay.className = 'daily-item-day-temp'
-          dailyWeatherDay.setAttribute('title', daily[i].tempDescription.charAt(0).toUpperCase()+daily[i].tempDescription.slice(1),)
-          dailyDay.appendChild(dailyWeatherDay)
-
-          const dailyWeatherDayTemp = document.createElement('span')
-          dailyWeatherDayTemp.className = 'data-daily-temp'
-          dailyWeatherDayTemp.textContent = daily[i].dayTemperature
-          dailyWeatherDay.appendChild(dailyWeatherDayTemp)
-
-          const dailyWeatherDayTempUnit = document.createElement('span')
-          dailyWeatherDayTempUnit.className='unit-temp'
-          dailyWeatherDay.appendChild(dailyWeatherDayTempUnit)
-
-          const dailyWeatherNight = document.createElement('span')
-          dailyWeatherNight.className = 'daily-item-night-temp' 
-          dailyDay.appendChild(dailyWeatherNight)
-
-          const dailyWeatherNightTemp = document.createElement('span')
-          dailyWeatherNightTemp.className = 'data-night-temp'
-          dailyWeatherNightTemp.textContent = daily[i].nightTemperature
-          dailyWeatherNight.appendChild(dailyWeatherNightTemp)
-
-          const dailyWeatherNightTempUnit = document.createElement('span')
-          dailyWeatherNightTempUnit.className = 'unit-temp'
-          dailyWeatherNight.appendChild(dailyWeatherNightTempUnit)
-
-          const dailyWindSpan = document.createElement('span')
-          dailyWindSpan.classList.add('daily-item-wind')
-          dailyWindSpan.setAttribute('title', getWindDescription(daily[i].windSpeed, units).windDesc,)
-          dailyDay.appendChild(dailyWindSpan)
-
-          const dailyWindSpeed = document.createElement('span')
-          dailyWindSpeed.className = 'data-daily-wind-speed'
-          dailyWindSpeed.textContent = getWindDescription(daily[i].windSpeed, units).roundedSpeed
-          dailyWindSpan.appendChild(dailyWindSpeed)
-
-          const dailyWindSpeedUnit = document.createElement('span')
-          dailyWindSpeedUnit.className = 'unit-speed'
-          dailyWindSpan.appendChild(dailyWindSpeedUnit)
-        }
-        changeUnit(units)      
-        console.log(query)
-      
+        const {city,country,current,daily,units} = data
+        changeUnit(units)
+        showForecast(city,country,current,units)
+        showDailyForecast(daily,units)
+      }
     }
 
     function getUviColor(uvi){
@@ -223,43 +192,43 @@ const dom = (()=>{
       let moonIcon = ''
       let moonDesc = ''
       if (moonPhase === 0 || moonPhase === 1) {
-        moonName = 'New Moon';
+        moonDesc = 'New Moon';
         moonIcon = './svg/moon-new.svg';
       }
       if (moonPhase === 0.25) {
-        moonName = 'First Quarter Moon';
+        moonDesc = 'First Quarter Moon';
         moonIcon = './svg/moon-first-quarter.svg';
       }
       if (moonPhase === 0.5) {
-        moonName = 'Full Moon';
+        moonDesc = 'Full Moon';
         moonIcon = './svg/moon-full.svg';
       }
       if (moonPhase === 0.75) {
-        moonName = 'Last Quarter';
+        moonDesc = 'Last Quarter';
         moonIcon = './svg/moon-last-quarter.svg';
       }
       if (moonPhase > 0 && moonPhase < 0.25) {
-        moonName = 'Waxing Crescent';
+        moonDesc = 'Waxing Crescent';
         moonIcon = './svg/moon-waxing-crescent.svg';
       }
       if (moonPhase > 0.25 && moonPhase < 0.5) {
-        moonName = 'Waxing Gibbous';
+        moonDesc = 'Waxing Gibbous';
         moonIcon = './svg/moon-waxing-gibbous.svg';
       }
       if (moonPhase > 0.5 && moonPhase < 0.75) {
-        moonName = 'Waning Gibbous';
+        moonDesc = 'Waning Gibbous';
         moonIcon = './svg/moon-waning-gibbous.svg';
       }
       if (moonPhase > 0.75 && moonPhase < 1) {
-        moonName = 'Waning Crescent';
+        moonDesc = 'Waning Crescent';
         moonIcon = './svg/moon-waning-crescent.svg';
       }
-      return {moonName, moonDesc};
+      return {moonDesc, moonDesc};
     }
 
     function changeUnit(units){
       const metricButton = document.querySelector('.units-metric')
-      const imperialButton = document.querySelector('units-imperial')
+      const imperialButton = document.querySelector('.units-imperial')
       const tempUnits = document.querySelectorAll('.unit-temp')
       const speedUnits = document.querySelectorAll('.unit-speed')
 
@@ -282,33 +251,34 @@ const dom = (()=>{
       tempUnits.forEach((unit)=>{
         unit.textContent = tempUnit
       })
-      speedUnits.foreach((unit)=>{
+      speedUnits.forEach((unit)=>{
         unit.textContent = windUnit
       })
     }
 
     function formatTime(data,units){
       let formattedTime
-      let formattedSunrise
-      let formattedSunset
+      let formattedSunriseTime
+      let formattedSunsetTime
       let formattedWeekDay
       if(units==='imperial'){
         formattedTime = format(data, 'EEEE d MMMM yyyy | h:mm aa')
-        formattedSunrise = format(data, 'h:mm aa')
-        formattedSunset = format(data, 'h:mm aa')
+        formattedSunriseTime = format(data, 'hh:mm aa')
+        formattedSunsetTime = format(data, 'hh:mm aa')
         formattedWeekDay = format(data, 'EEEE')
         return {formattedTime, formattedSunrise, formattedSunset, formattedWeekDay}
       }
       formattedTime = format(data, 'EEEE d MMMM yyyy | H:mm');
-      formattedSunriseTime = format(data, 'H:mm');
-      formattedSunsetTime = format(data, 'H:mm');
+      formattedSunriseTime = format(data, 'HH:mm');
+      formattedSunsetTime = format(data, 'HH:mm');
       formattedWeekDay = format(data, 'EEEE')
       return { formattedTime, formattedSunriseTime, formattedSunsetTime,formattedWeekDay };
     }
 
     return{
-        showForecast,
-        loading,
+      loading,
+      renderApp,
+        
     }
   
 })()

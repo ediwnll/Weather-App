@@ -8,7 +8,7 @@ const handler =(()=>{
     async function load(input = 'Amsterdam', units='metric'){
         dom.loading('loading')
         const weatherData = await api.getLocData(input, units)
-        dom.showForecast(weatherData)
+        dom.renderApp(weatherData)
         dom.loading('finished')
     }
 
